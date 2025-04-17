@@ -5,77 +5,90 @@
 #include "data.h"
 #include "images.h"
 
-// Configuration
 const String OHM_SERVER = SERVER_URL;
 const String OHM_PORT = "8085";
 
-// Timing
 unsigned long lastUpdate = 0;
 unsigned long lastServerCheck = 0;
-const unsigned long SERVER_CHECK_INTERVAL = 10000; // 10 seconds
+const unsigned long SERVER_CHECK_INTERVAL = 10000;
+const unsigned long RECONNECT_DELAY = 2000;
 
-// Display state
 int counter = 0;
 bool showCpu = true;
+int connectionAttempts = 0;
+const int MAX_CONNECTION_ATTEMPTS = 5;
+
+void showConnectionScreen() {
+  clearDisplay();
+  drawImage(epd_bitmap_POLARAS);
+}
 
 String getFirstWord(const String& str);
 
-void showConnectionStatus() {
-  clearDisplay();
-  if (isWiFiConnected()) {
-    showMessage(getIPv4().c_str());
-  } else {
-    showMessage("Connecting...");
-  }
-}
-
 void ensureConnection() {
-  clearDisplay();
-  drawImage(epd_bitmap_POLARAS);
+  showConnectionScreen();
   
   while (!isWiFiConnected() || !isServerReachable(OHM_SERVER.c_str(), OHM_PORT.toInt())) {
     connectToWiFi();
-    delay(2000);
-    showConnectionStatus();
+    delay(RECONNECT_DELAY);
+    
+    if (++connectionAttempts >= MAX_CONNECTION_ATTEMPTS) {
+      ESP.restart(); // Reboot if we can't connect after several attempts
+    }
   }
+  connectionAttempts = 0; // Reset counter on successful connection
 }
 
 void setup() {
   Serial.begin(115200);
   initDisplay(false);
   
+  // Initial connection sequence
+  showConnectionScreen();
   connectToWiFi();
-  showConnectionStatus();
-  delay(7000);
-  
   ensureConnection();
+  
+  // Show IP if connected
+  if (isWiFiConnected()) {
+    clearDisplay();
+    showMessage(getIPv4().c_str());
+    delay(3000);
+  }
 }
 
 void loop() {
   unsigned long currentMillis = millis();
 
+  // Regular connection maintenance
   if (currentMillis - lastServerCheck >= SERVER_CHECK_INTERVAL) {
     lastServerCheck = currentMillis;
-    ensureConnection();
+    
+    if (!isWiFiConnected() || !isServerReachable(OHM_SERVER.c_str(), OHM_PORT.toInt())) {
+      ensureConnection();
+    }
   }
 
+  // Temperature display updates
   if (currentMillis - lastUpdate >= 1000) {
     lastUpdate = currentMillis;
 
-    String json = getHardwareData(OHM_SERVER, OHM_PORT);
-    Temps temps = parseHardwareData(json.c_str());
+    if (isWiFiConnected() && isServerReachable(OHM_SERVER.c_str(), OHM_PORT.toInt())) {
+      String json = getHardwareData(OHM_SERVER, OHM_PORT);
+      Temps temps = parseHardwareData(json.c_str());
 
-    if (showCpu) {
-      showTitle(getFirstWord(temps.cpuName).c_str());
-      showTemp(temps.cpuTemp.c_str());
-    } else {
-      showTitle(getFirstWord(temps.gpuName).c_str());
-      showTemp(temps.gpuTemp.c_str());
-    }
+      if (showCpu) {
+        showTitle(getFirstWord(temps.cpuName).c_str());
+        showTemp(temps.cpuTemp.c_str());
+      } else {
+        showTitle(getFirstWord(temps.gpuName).c_str());
+        showTemp(temps.gpuTemp.c_str());
+      }
 
-    if (++counter >= 5) {
-      showCpu = !showCpu;
-      counter = 0;
+      // Toggle between CPU/GPU every 5 updates
+      if (++counter >= 5) {
+        showCpu = !showCpu;
+        counter = 0;
+      }
     }
   }
 }
