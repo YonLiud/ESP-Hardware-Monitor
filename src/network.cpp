@@ -40,3 +40,22 @@ bool isServerReachable(const char* host, uint16_t port) {
   WiFiClient client;
   return client.connect(host, port);
 }
+
+#include <WiFi.h>        // or <ESP8266WiFi.h> for ESP8266
+#include <HTTPClient.h>
+
+String getHardwareInfo(String ip, String port) {
+  String url = "http://" + ip + ":" + port + "/data.json";
+  HTTPClient http;
+  http.begin(url);
+  int code = http.GET();
+
+  String payload;
+  if(code == HTTP_CODE_OK) { 
+    payload = http.getString();
+  } else {
+    Serial.printf("HTTP error: %d\n", code);
+  }
+  http.end();
+  return payload;
+}
