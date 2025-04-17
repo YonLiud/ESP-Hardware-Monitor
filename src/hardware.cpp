@@ -1,44 +1,43 @@
-#include "hardware.h"
-#define ARDUINOJSON_DEFAULT_NESTING_LIMIT 50
+#define ARDUINOJSON_DEFAULT_NESTING_LIMIT 20
 #include <ArduinoJson.h>
 
-void parseHardwareData(const char* payload) {
+struct Temps {
+  String cpu;
+  String gpu;
+};
+
+std::pair<String, String> parseHardwareData(const String& payload) {
   JsonDocument doc;  
   auto err = deserializeJson(doc, payload);
   if (err) {
     Serial.print(F("JSON error: "));
     Serial.println(err.f_str());
-    return;
+    return {"", ""};  // return empty pair on error
   }
 
-  // CPU path: Children[0] → Children[1] → Children[1] → Children[0] → Value
-  const char* cpuTemp = doc["Children"]
-                            [0]
-                            ["Children"]
-                            [1]
-                            ["Children"]
-                            [1]
-                            ["Children"]
-                            [0]
-                            ["Value"]
-                            .as<const char*>();
+  // CPU: Children[0] → Children[1] → Children[1] → Children[0] → "Value"
+  const char* cpuCstr = doc["Children"]
+                           [0]
+                           ["Children"]
+                           [1]
+                           ["Children"]
+                           [1]
+                           ["Children"]
+                           [0]
+                           ["Value"]
+                           .as<const char*>();
 
-  // GPU path: Children[0] → Children[3] → Children[1] → Children[0] → Value
-  const char* gpuTemp = doc["Children"]
-                            [0]
-                            ["Children"]
-                            [3]
-                            ["Children"]
-                            [1]
-                            ["Children"]
-                            [0]
-                            ["Value"]
-                            .as<const char*>();
+  // GPU: Children[0] → Children[3] → Children[1] → Children[0] → "Value"
+  const char* gpuCstr = doc["Children"]
+                           [0]
+                           ["Children"]
+                           [3]
+                           ["Children"]
+                           [1]
+                           ["Children"]
+                           [0]
+                           ["Value"]
+                           .as<const char*>();
 
-  Serial.print(F("CPU Temperature: "));
-  Serial.println(cpuTemp);
-
-  Serial.print(F("GPU Temperature: "));
-  Serial.println(gpuTemp);
+  return { String(cpuCstr), String(gpuCstr) }; // return as pair
 }
-

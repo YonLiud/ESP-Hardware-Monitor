@@ -2,6 +2,7 @@
 #include "display.h"
 #include "config.h"
 #include <string>
+#include <HTTPClient.h>
 
 void connectToWiFi() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -41,10 +42,7 @@ bool isServerReachable(const char* host, uint16_t port) {
   return client.connect(host, port);
 }
 
-#include <WiFi.h>        // or <ESP8266WiFi.h> for ESP8266
-#include <HTTPClient.h>
-
-String getHardwareInfo(String ip, String port) {
+String getHardwareData(String ip, String port) {
   String url = "http://" + ip + ":" + port + "/data.json";
   HTTPClient http;
   http.begin(url);

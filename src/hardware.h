@@ -6,7 +6,7 @@
 
 // std::array<int, 3> fetchHardwareData(const char* server, uint16_t port);
 
-void parseHardwareData(const char* payload);
+std::pair<String, String> parseHardwareData(const String& payload);
 void displaySensorData(const String& name, const String& value);
 
 #endif
