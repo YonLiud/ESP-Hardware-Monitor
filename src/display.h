@@ -5,5 +5,8 @@
 
 void initDisplay();
 void showMessage(const char* message);
+void clearDisplay();
+void showTemp(const char* temp);
+void showTitle(const char* temp);
 
 #endif

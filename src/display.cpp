@@ -17,7 +17,7 @@ void initDisplay() {
   if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     for (;;);
   }
-
+  display.setRotation(2);
   display.display();
   delay(1000);
   display.setTextSize(1);
@@ -25,11 +25,41 @@ void initDisplay() {
   display.setCursor(0, 0);
   display.println("Display Ready");
   display.display();
+
+}
+
+void clearDisplay()
+{
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.display();
 }
 
 void showMessage(const char* message) {
   display.clearDisplay();
+  display.setTextSize(2);
   display.setCursor(0, 0);
   display.println(message);
+  display.display();
+}
+
+void showTemp(const char* temp)
+{
+  display.fillRect(0, 27, 128, 37, BLACK);
+
+  display.setTextColor(WHITE);
+  display.setTextSize(5);
+  display.setFont(NULL);
+  display.setCursor(6, 27);
+  display.println(temp);
+  display.display();
+}
+
+void showTitle(const char* title) {
+  display.setTextColor(WHITE);
+  display.setTextSize(3);
+  display.setFont(NULL);
+  display.setCursor(0, 0);
+  display.println(title);
   display.display();
 }
