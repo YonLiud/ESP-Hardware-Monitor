@@ -7,6 +7,16 @@
 const String OHM_SERVER = SERVER_URL;
 const String OHM_PORT = "8085";
 
+unsigned long lastUpdate = 0;
+int counter = 0;
+bool showCpu = true;
+
+String firstWord(const String& str) {
+  int spaceIndex = str.indexOf(' ');
+  if (spaceIndex == -1) return str;
+  return str.substring(0, spaceIndex);
+}
+
 void setup() {
   Serial.begin(115200);
   initDisplay();
@@ -19,20 +29,27 @@ void setup() {
 
   delay(5000);
   clearDisplay();
-  showTitle("CPU & GPU");
 }
 
 void loop() {
-  String json = getHardwareData(OHM_SERVER, OHM_PORT);
-  auto temps = parseHardwareData(json.c_str());
+  if (millis() - lastUpdate >= 1000) {
+    lastUpdate = millis();
 
-  Serial.print("CPU Temp: "); 
-  Serial.println(temps.first); 
+    String json = getHardwareData(OHM_SERVER, OHM_PORT);
+    Temps temps = parseHardwareData(json.c_str());
 
-  Serial.print("GPU Temp: "); 
-  Serial.println(temps.second);
+    if (showCpu) {
+      showTitle(firstWord(temps.cpuName).c_str());
+      showTemp(temps.cpuTemp.c_str());
+    } else {
+      showTitle(firstWord(temps.gpuName).c_str());
+      showTemp(temps.gpuTemp.c_str());
+    }
 
-  showTemp(temps.first.c_str());
-
-  delay(1000);
+    counter++;
+    if (counter >= 5) {
+      showCpu = !showCpu;
+      counter = 0;
+    }
+  }
 }

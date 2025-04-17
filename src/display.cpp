@@ -56,6 +56,7 @@ void showTemp(const char* temp)
 }
 
 void showTitle(const char* title) {
+  display.fillRect(0, 0, 128, 27, BLACK);
   display.setTextColor(WHITE);
   display.setTextSize(3);
   display.setFont(NULL);

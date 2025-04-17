@@ -1,43 +1,28 @@
 #define ARDUINOJSON_DEFAULT_NESTING_LIMIT 20
 #include <ArduinoJson.h>
+#include "hardware.h"
 
-struct Temps {
-  String cpu;
-  String gpu;
-};
-
-std::pair<String, String> parseHardwareData(const String& payload) {
+Temps parseHardwareData(const String& payload) {
   JsonDocument doc;  
   auto err = deserializeJson(doc, payload);
   if (err) {
     Serial.print(F("JSON error: "));
     Serial.println(err.f_str());
-    return {"", ""};  // return empty pair on error
+    return {};
   }
 
-  // CPU: Children[0] → Children[1] → Children[1] → Children[0] → "Value"
-  const char* cpuCstr = doc["Children"]
-                           [0]
-                           ["Children"]
-                           [1]
-                           ["Children"]
-                           [1]
-                           ["Children"]
-                           [0]
-                           ["Value"]
-                           .as<const char*>();
+  const char* cpuTempCstr = doc["Children"][0]["Children"][1]["Children"][1]["Children"][0]["Value"].as<const char*>();
 
-  // GPU: Children[0] → Children[3] → Children[1] → Children[0] → "Value"
-  const char* gpuCstr = doc["Children"]
-                           [0]
-                           ["Children"]
-                           [3]
-                           ["Children"]
-                           [1]
-                           ["Children"]
-                           [0]
-                           ["Value"]
-                           .as<const char*>();
+  const char* gpuTempCstr = doc["Children"][0]["Children"][3]["Children"][1]["Children"][0]["Value"].as<const char*>();
 
-  return { String(cpuCstr), String(gpuCstr) }; // return as pair
+  const char* cpuNameCstr = doc["Children"][0]["Children"][1]["Text"].as<const char*>();
+
+  const char* gpuNameCstr = doc["Children"][0]["Children"][3]["Text"].as<const char*>();
+
+  return {
+    String(cpuTempCstr),
+    String(gpuTempCstr),
+    String(cpuNameCstr),
+    String(gpuNameCstr)
+  };
 }
