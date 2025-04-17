@@ -1,5 +1,4 @@
 #include "network.h"
-#include "display.h"
 #include "config.h"
 #include <string>
 #include <HTTPClient.h>
@@ -9,14 +8,12 @@ void connectToWiFi() {
   unsigned long startMillis = millis();
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    if (millis() - startMillis > 15000) { // Timeout after 15 seconds
+    if (millis() - startMillis > 15000) {
       Serial.println("Wi-Fi connection timeout!");
-      showMessage("Wi-Fi Timeout");
       return;
     }
   }
   Serial.println("Wi-Fi connected!");
-  showMessage("Wi-Fi Connected!");
 }
 
 String getIPv4() {
