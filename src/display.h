@@ -3,7 +3,7 @@
 
 #include <Adafruit_SSD1306.h>
 
-void initDisplay();
+void initDisplay(bool inverted);
 void showMessage(const char* message);
 void clearDisplay();
 void showTemp(const char* temp);

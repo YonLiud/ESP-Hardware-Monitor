@@ -11,15 +11,17 @@
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
-void initDisplay() {
+void initDisplay(bool inverted) {
   Wire.begin(SDA_PIN, SCK_PIN);
 
   if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     for (;;);
   }
   display.setRotation(2);
+  display.invertDisplay(inverted);
   display.display();
   delay(1000);
+  display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(0, 0);
@@ -36,9 +38,7 @@ void clearDisplay()
 }
 
 void showMessage(const char* message) {
-  display.clearDisplay();
-  display.setTextSize(2);
-  display.setCursor(0, 0);
+  display.setTextSize(1);
   display.println(message);
   display.display();
 }
