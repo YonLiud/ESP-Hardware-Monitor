@@ -2,6 +2,15 @@
 #include <ArduinoJson.h>
 #include "hardware.h"
 
+String cleanTemp(const char* tempStr) {
+  String temp = String(tempStr);
+  int idx = temp.indexOf(" ");
+  if (idx != -1) {
+    temp = temp.substring(0, idx);
+  }
+  return temp;
+}
+
 Temps parseHardwareData(const String& payload) {
   JsonDocument doc;  
   auto err = deserializeJson(doc, payload);
@@ -18,10 +27,9 @@ Temps parseHardwareData(const String& payload) {
   const char* cpuNameCstr = doc["Children"][0]["Children"][1]["Text"].as<const char*>();
 
   const char* gpuNameCstr = doc["Children"][0]["Children"][3]["Text"].as<const char*>();
-
   return {
-    String(cpuTempCstr),
-    String(gpuTempCstr),
+    cleanTemp(cpuTempCstr),
+    cleanTemp(gpuTempCstr),
     String(cpuNameCstr),
     String(gpuNameCstr)
   };
