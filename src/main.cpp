@@ -33,22 +33,20 @@ void ensureConnection() {
     delay(RECONNECT_DELAY);
     
     if (++connectionAttempts >= MAX_CONNECTION_ATTEMPTS) {
-      ESP.restart(); // Reboot if we can't connect after several attempts
+      ESP.restart();
     }
   }
-  connectionAttempts = 0; // Reset counter on successful connection
+  connectionAttempts = 0;
 }
 
 void setup() {
   Serial.begin(115200);
   initDisplay(false);
   
-  // Initial connection sequence
   showConnectionScreen();
   connectToWiFi();
   ensureConnection();
   
-  // Show IP if connected
   if (isWiFiConnected()) {
     clearDisplay();
     showMessage(getIPv4().c_str());
@@ -59,7 +57,6 @@ void setup() {
 void loop() {
   unsigned long currentMillis = millis();
 
-  // Regular connection maintenance
   if (currentMillis - lastServerCheck >= SERVER_CHECK_INTERVAL) {
     lastServerCheck = currentMillis;
     
@@ -68,7 +65,6 @@ void loop() {
     }
   }
 
-  // Temperature display updates
   if (currentMillis - lastUpdate >= 1000) {
     lastUpdate = currentMillis;
 
@@ -84,7 +80,6 @@ void loop() {
         showTemp(temps.gpuTemp.c_str());
       }
 
-      // Toggle between CPU/GPU every 5 updates
       if (++counter >= 5) {
         showCpu = !showCpu;
         counter = 0;

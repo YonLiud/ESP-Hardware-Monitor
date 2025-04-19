@@ -1,6 +1,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <Fonts/Org_01.h>
 #include "display.h"
 #include "images.h"
 
@@ -18,27 +19,28 @@ void initDisplay(bool inverted) {
   if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     for (;;);
   }
+  display.display();
+  delay(500);
   display.setRotation(2);
   display.invertDisplay(inverted);
-  display.display();
-  delay(3000);
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
   drawImage(epd_bitmap_POLARAS);
   display.display();
+  delay(3000);
 
 }
 
 void clearDisplay()
 {
   display.clearDisplay();
-  display.setCursor(1, 1);
+  display.setCursor(1, 20);
   display.display();
 }
 
 void showMessage(const char* message) {
-  display.setTextSize(1);
+  display.setTextSize(2);
   display.println(message);
   display.display();
 }
@@ -49,8 +51,8 @@ void showTemp(const char* temp)
 
   display.setTextColor(WHITE);
   display.setTextSize(5);
-  display.setFont(NULL);
-  display.setCursor(6, 27);
+  display.setFont(&Org_01); // NULL 
+  display.setCursor(6, 56); // 6, 27 FOR DEFAULT FONT
   display.println(temp);
   display.display();
 }
@@ -59,14 +61,14 @@ void showTitle(const char* title) {
   display.fillRect(0, 0, 128, 27, BLACK);
   display.setTextColor(WHITE);
   display.setTextSize(3);
-  display.setFont(NULL);
-  display.setCursor(2, 0);
+  display.setFont(&Org_01);
+  display.setCursor(2, 20);
   display.println(title);
   display.display();
 }
 
 void drawImage(const unsigned char* image) {
   display.clearDisplay();
-  display.drawBitmap(0, 0, image, 128, 64, 1); // 1 = color (white)
+  display.drawBitmap(0, 0, image, 128, 64, 1);
   display.display();
 }
