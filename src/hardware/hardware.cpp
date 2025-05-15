@@ -20,6 +20,8 @@ Temps parseHardwareData(const String& payload) {
     return {};
   }
 
+  // to get the parsed json route use https://jsonformatter.org/json-parser
+
   const char* cpuTempCstr = doc["Children"][0]["Children"][1]["Children"][3]["Children"][0]["Value"].as<const char*>();
 
   const char* gpuTempCstr = doc["Children"][0]["Children"][3]["Children"][2]["Children"][0]["Value"].as<const char*>();
