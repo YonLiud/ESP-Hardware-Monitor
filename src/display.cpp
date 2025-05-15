@@ -19,14 +19,11 @@ void initDisplay(bool inverted) {
   if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     for (;;);
   }
-  display.display();
-  delay(500);
+  display.clearDisplay();
   display.setRotation(2);
   display.invertDisplay(inverted);
-  display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
-  drawImage(epd_bitmap_POLARAS);
   display.display();
   delay(3000);
 
@@ -40,7 +37,8 @@ void clearDisplay()
 }
 
 void showMessage(const char* message) {
-  display.setTextSize(2);
+  display.setFont(NULL);
+  display.setTextSize(1);
   display.println(message);
   display.display();
 }
@@ -51,8 +49,8 @@ void showTemp(const char* temp)
 
   display.setTextColor(WHITE);
   display.setTextSize(5);
-  display.setFont(&Org_01); // NULL 
-  display.setCursor(6, 56); // 6, 27 FOR DEFAULT FONT
+  display.setFont(&Org_01);
+  display.setCursor(6, 56);
   display.println(temp);
   display.display();
 }

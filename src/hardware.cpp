@@ -20,9 +20,9 @@ Temps parseHardwareData(const String& payload) {
     return {};
   }
 
-  const char* cpuTempCstr = doc["Children"][0]["Children"][1]["Children"][1]["Children"][0]["Value"].as<const char*>();
+  const char* cpuTempCstr = doc["Children"][0]["Children"][1]["Children"][3]["Children"][0]["Value"].as<const char*>();
 
-  const char* gpuTempCstr = doc["Children"][0]["Children"][3]["Children"][1]["Children"][0]["Value"].as<const char*>();
+  const char* gpuTempCstr = doc["Children"][0]["Children"][3]["Children"][2]["Children"][0]["Value"].as<const char*>();
 
   const char* cpuNameCstr = doc["Children"][0]["Children"][1]["Text"].as<const char*>();
 

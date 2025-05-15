@@ -6,7 +6,7 @@
 #include "images.h"
 
 const String OHM_SERVER = SERVER_URL;
-const String OHM_PORT = "8085";
+const String OHM_PORT = "20000";
 
 unsigned long lastUpdate = 0;
 unsigned long lastServerCheck = 0;
@@ -20,7 +20,8 @@ const int MAX_CONNECTION_ATTEMPTS = 5;
 
 void showConnectionScreen() {
   clearDisplay();
-  drawImage(epd_bitmap_POLARAS);
+  // drawImage(epd_bitmap_POLARAS);
+  showMessage("No Connection");
 }
 
 String getFirstWord(const String& str);
