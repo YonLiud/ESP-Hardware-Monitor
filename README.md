@@ -8,6 +8,13 @@ Retrieves JSON data from "Open Hardware Monitor" and displays it on an ESP32 OLE
 
 Make sure to create `/include/config.h` and define variables there!
 
+*Example of a config file*:
+```cpp
+#define WIFI_SSID "subnet"
+#define WIFI_PASSWORD "roottoor"
+#define SERVER_URL "192.168.1.120"
+```
+
 You can modify the parsing logic by adjusting the parseHardwareData function in ```src/hardware.cpp```.
 
 Enjoy monitoring your system's performance on a small OLED display!
