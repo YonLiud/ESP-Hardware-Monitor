@@ -6,6 +6,8 @@ Retrieves JSON data from "Open Hardware Monitor" and displays it on an ESP32 OLE
 
 * **Data Parsing**: The JSON is parsed based on Open Hardware Monitor's IDs.
 
+Make sure to create `/include/config.h` and define variables there!
+
 You can modify the parsing logic by adjusting the parseHardwareData function in ```src/hardware.cpp```.
 
 Enjoy monitoring your system's performance on a small OLED display!
