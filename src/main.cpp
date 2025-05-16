@@ -5,47 +5,53 @@
 #include "data.h"
 #include "images.h"
 
+unsigned long lastUpdate = 0;
 const String OHM_SERVER = SERVER_URL;
 const String OHM_PORT = "20000";
 
-unsigned long lastUpdate = 0;
-unsigned long lastServerCheck = 0;
-const unsigned long SERVER_CHECK_INTERVAL = 10000;
-const unsigned long RECONNECT_DELAY = 2000;
-
-int counter = 0;
-bool showCpu = true;
-int connectionAttempts = 0;
-const int MAX_CONNECTION_ATTEMPTS = 5;
-
 String getFirstWord(const String& str);
+void getData();
 
 void setup() {
   Serial.begin(115200);
   initDisplay();
   
-  // showConnectionScreen();
-  // connectToWiFi();
-  // ensureConnection();
+  connectToWiFi();
+  addText("Connecting to wifi");
   
-  // if (isWiFiConnected()) {
-  //   clearDisplay();
-  //   showMessage(getIPv4().c_str());
-  //   delay(3000);
-  // }
-
+  while (!isWiFiConnected())
+  {
+    addText(".");
+    delay(500);
+  }
+  showMessage("");
+  showMessage(getIPv4().c_str());
   initGrid(2);
+  delay(500);
 
-  showRow("AMD", "55", 0);
-  showRow("NVIDIA", "85", 1);
 
+  addText("Loading data");
+  getData();
 }
 
 void loop() {
-  
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - lastUpdate >= 5000) {
+    lastUpdate = currentMillis;
+    getData();
+  }
 }
 
 String getFirstWord(const String& str) {
   int spaceIndex = str.indexOf(' ');
   return (spaceIndex == -1) ? str : str.substring(0, spaceIndex);
+}
+
+void getData() {
+  String json = getHardwareData(OHM_SERVER, OHM_PORT);
+  Temps temps = parseHardwareData(json.c_str());
+
+  showRow(getFirstWord(temps.cpuName).c_str(), temps.cpuTemp.c_str(), 0);
+  showRow(getFirstWord(temps.gpuName).c_str(), temps.gpuTemp.c_str(), 1);
 }
