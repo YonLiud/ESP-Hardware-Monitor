@@ -1,6 +1,8 @@
 # ESP Hardware Monitor
 Retrieves JSON data from "Open Hardware Monitor" and displays it on an ESP32 OLED display, providing a quick view of your computer's hardware statistics.
 
+[Click here for the **TFT LCD version**](https://github.com/YonLiud/ESP-Hardware-Monitor/tree/LCD-Version)
+
 ## Details
 * **Personal project**: Built for personal use, feel free to customize.
 
