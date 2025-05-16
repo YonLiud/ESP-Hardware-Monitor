@@ -18,75 +18,31 @@ bool showCpu = true;
 int connectionAttempts = 0;
 const int MAX_CONNECTION_ATTEMPTS = 5;
 
-void showConnectionScreen() {
-  clearDisplay();
-  // drawImage(epd_bitmap_POLARAS);
-  showMessage("No Connection");
-}
-
 String getFirstWord(const String& str);
-
-void ensureConnection() {
-  showConnectionScreen();
-  
-  while (!isWiFiConnected() || !isServerReachable(OHM_SERVER.c_str(), OHM_PORT.toInt())) {
-    connectToWiFi();
-    delay(RECONNECT_DELAY);
-    
-    if (++connectionAttempts >= MAX_CONNECTION_ATTEMPTS) {
-      ESP.restart();
-    }
-  }
-  connectionAttempts = 0;
-}
 
 void setup() {
   Serial.begin(115200);
-  initDisplay(false);
+  initDisplay();
   
-  showConnectionScreen();
-  connectToWiFi();
-  ensureConnection();
+  // showConnectionScreen();
+  // connectToWiFi();
+  // ensureConnection();
   
-  if (isWiFiConnected()) {
-    clearDisplay();
-    showMessage(getIPv4().c_str());
-    delay(3000);
-  }
+  // if (isWiFiConnected()) {
+  //   clearDisplay();
+  //   showMessage(getIPv4().c_str());
+  //   delay(3000);
+  // }
+
+  initGrid(2);
+
+  showRow("AMD", "55", 0);
+  showRow("NVIDIA", "85", 1);
+
 }
 
 void loop() {
-  unsigned long currentMillis = millis();
-
-  if (currentMillis - lastServerCheck >= SERVER_CHECK_INTERVAL) {
-    lastServerCheck = currentMillis;
-    
-    if (!isWiFiConnected() || !isServerReachable(OHM_SERVER.c_str(), OHM_PORT.toInt())) {
-      ensureConnection();
-    }
-  }
-
-  if (currentMillis - lastUpdate >= 1000) {
-    lastUpdate = currentMillis;
-
-    if (isWiFiConnected() && isServerReachable(OHM_SERVER.c_str(), OHM_PORT.toInt())) {
-      String json = getHardwareData(OHM_SERVER, OHM_PORT);
-      Temps temps = parseHardwareData(json.c_str());
-
-      if (showCpu) {
-        showTitle(getFirstWord(temps.cpuName).c_str());
-        showTemp(temps.cpuTemp.c_str());
-      } else {
-        showTitle(getFirstWord(temps.gpuName).c_str());
-        showTemp(temps.gpuTemp.c_str());
-      }
-
-      if (++counter >= 5) {
-        showCpu = !showCpu;
-        counter = 0;
-      }
-    }
-  }
+  
 }
 
 String getFirstWord(const String& str) {
