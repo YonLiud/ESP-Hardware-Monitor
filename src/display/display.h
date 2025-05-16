@@ -14,6 +14,7 @@
 
 void initDisplay();
 void showMessage(const char* message);
+void addText(const char* message);
 void clearDisplay();
 void initGrid(int rows);
 void showRow(const char* title, const char* temp, int row);

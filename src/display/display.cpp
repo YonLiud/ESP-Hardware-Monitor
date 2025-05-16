@@ -36,9 +36,17 @@ void initDisplay() {
   clearDisplay();
   tft.setRotation(2);
   tft.setTextColor(ST77XX_WHITE);
-  tft.setTextSize(3);
+  tft.setTextSize(2);
   tft.setCursor(0,0);
   tft.println("Hello ESP32");
+}
+
+void showMessage(const char* message){
+  tft.println(message);
+}
+
+void addText(const char* message){
+  tft.print(message);
 }
 
 void clearDisplay()
